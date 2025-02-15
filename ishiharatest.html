@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ishihara Color Blindness Test</title>
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background: #004e92;
+            color: #fff;
+        }
+        .plate { 
+            margin: 20px auto; 
+            width: 300px; 
+            border: 5px solid #fff; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .question { 
+            margin: 20px; 
+            font-size: 24px; 
+            font-weight: 600;
+            color: white;
+        }
+        input[type="text"] {
+            color: black;
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        button { 
+            margin: 10px; 
+            padding: 12px 25px; 
+            background-color: green; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #feb47b;
+        }
+        #result { 
+            margin-top: 20px; 
+            font-size: 20px; 
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Ishihara Color Blindness Test</h2>
+    <div id="test-area">
+        <img id="plate" class="plate" src="" alt="Ishihara Plate">
+        <div class="question" id="question"></div>
+        <input type="text" id="answer" placeholder="Enter the number you see">
+        <br>
+        <button onclick="nextPlate()">Next</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        const plates = [
+            {src: 'c1.png', answer: '8'},
+            {src: 'c2.png', answer: '29'},
+            {src: 'c3.png', answer: '5'},
+            {src: 'c4.png', answer: '3'},
+            {src: 'c5.png', answer: '74'},
+            {src: 'c6.png', answer: '6'},
+            {src: 'c7.png', answer: '45'},
+            {src: 'c8.png', answer: '26'},
+            {src: 'c9.png', answer: '42'},
+            {src: 'c10.png', answer: '73'},
+        ];
+
+        let current = 0;
+        let score = 0;
+
+        function loadPlate() {
+            document.getElementById('plate').src = plates[current].src;
+            document.getElementById('question').innerText = `Plate ${current + 1}: What number do you see?`;
+        }
+
+        function nextPlate() {
+            const userAnswer = document.getElementById('answer').value.trim();
+            if (userAnswer === plates[current].answer) score++;
+
+            current++;
+            if (current < plates.length) {
+                loadPlate();
+                document.getElementById('answer').value = '';
+            } else {
+                document.getElementById('test-area').style.display = 'none';
+                let diagnosis = score === plates.length ? 'Normal Color Vision' : (score > 5 ? 'Mild Color Deficiency' : 'Severe Color Deficiency');
+                document.getElementById('result').innerHTML = `<h3>Test Completed</h3><p>Your Score: ${score}/${plates.length}</p><p>Diagnosis: ${diagnosis}</p>`;
+            }
+        }
+
+        window.onload = loadPlate;
+    </script>
+</body>
+</html>
