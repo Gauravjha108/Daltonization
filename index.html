@@ -21,23 +21,23 @@
             <video id="video" controls style="display: none;"></video>
         </div>
 
+        
         <div class="button-group" id="button-group">
-            <button onclick="applyMode('protanopia')">Protanopia</button>
-            <button onclick="applyMode('deuteranopia')">Deuteranopia</button>
-            <button onclick="applyMode('tritanopia')">Tritanopia</button>
-            <button onclick="applyMode('protanomaly')">Protanomaly</button>
-            <button onclick="applyMode('deuteranomaly')">Deuteranomaly</button>
-            <button onclick="applyMode('tritanomaly')">Tritanomaly</button>
+            <button onclick="applyMode('Protanopia')">Protanopia</button>
+            <button onclick="applyMode('Deuteranopia')">Deuteranopia</button>
+            <button onclick="applyMode('Tritanopia')">Tritanopia</button>
+            <button onclick="applyMode('Protanomaly')">Protanomaly</button>
+            <button onclick="applyMode('Deuteranomaly')">Deuteranomaly</button>
+            <button onclick="applyMode('Tritanomaly')">Tritanomaly</button>
             <button onclick="applyMode('Grayscale')">Grayscale</button>
         </div>
-
         <div class="action-buttons">
             <button class="download-btn" onclick="downloadMedia()">📥 Download Media</button>
             <button class="reset-btn" onclick="reset()">🔄 Reset</button>
+            <button class="yotest" onclick="window.location.href='ishiharatest.html'">🧪 Take Ishihara Test</button>
         </div>
     </div>
 
-    
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.0/dist/ffmpeg.min.js"></script>
     <script>
         const upload = document.getElementById('upload');
@@ -51,7 +51,7 @@
         let frames = []; 
         let ffmpeg = null;
 
-        
+
         async function initFFmpeg() {
             const { createFFmpeg } = FFmpeg;
             ffmpeg = createFFmpeg({ log: true });
@@ -119,25 +119,25 @@
                 let newR = r, newG = g, newB = b;
 
                 switch(mode) {
-                    case 'protanopia':
+                    case 'Protanopia':
                         newR = g * 0.5 + b * 0.5;
                         break;
-                    case 'deuteranopia':
+                    case 'Deuteranopia':
                         newG = r * 0.5 + b * 0.5;
                         break;
-                    case 'tritanopia':
+                    case 'Tritanopia':
                         newB = r * 0.5 + g * 0.5;
                         break;
-                    case 'protanomaly':
+                    case 'Protanomaly':
                         newR = r * 0.8 + g * 0.2;
                         break;
-                    case 'deuteranomaly':
+                    case 'Deuteranomaly':
                         newG = g * 0.8 + r * 0.2;
                         break;
-                    case 'tritanomaly':
+                    case 'Tritanomaly':
                         newB = b * 0.8 + g * 0.2;
                         break;
-                    case 'achromatopsia':
+                    case 'Grayscale':
                         let avg = (r + g + b) / 3;
                         newR = newG = newB = avg;
                         break;
@@ -158,13 +158,13 @@
 
         function resetButtons() {
             buttonGroup.innerHTML = `
-                <button onclick="applyMode('protanopia')">Protanopia</button>
-                <button onclick="applyMode('deuteranopia')">Deuteranopia</button>
-                <button onclick="applyMode('tritanopia')">Tritanopia</button>
-                <button onclick="applyMode('protanomaly')">Protanomaly</button>
-                <button onclick="applyMode('deuteranomaly')">Deuteranomaly</button>
-                <button onclick="applyMode('tritanomaly')">Tritanomaly</button>
-                <button onclick="applyMode('achromatopsia')">Grayscale</button>
+                <button onclick="applyMode('Protanopia')">Protanopia</button>
+                <button onclick="applyMode('Deuteranopia')">Deuteranopia</button>
+                <button onclick="applyMode('Tritanopia')">Tritanopia</button>
+                <button onclick="applyMode('Protanomaly')">Protanomaly</button>
+                <button onclick="applyMode('Deuteranomaly')">Deuteranomaly</button>
+                <button onclick="applyMode('Tritanomaly')">Tritanomaly</button>
+                <button onclick="applyMode('Grayscale')">Grayscale</button>
             `;
         }
 
@@ -173,37 +173,21 @@
                 video.pause();
                 video.currentTime = 0;
                 video.play();
-                frames = []; 
+                frames = []; // Clear frames
             } else if (originalImageData) {
                 ctx.putImageData(originalImageData, 0, 0);
             }
             resetButtons();
         }
 
-        async function downloadMedia() {
+        function downloadMedia() {
             if (isVideo) {
-                if (frames.length === 0) {
-                    alert('No frames to download. Please process the video first.');
-                    return;
-                }
-
-                
-                if (!ffmpeg) {
-                    await initFFmpeg();
-                }
-
-                
-                const outputFileName = 'output.mp4';
-                await ffmpeg.write('input.mp4', await fetchFile(video.src));
-                await ffmpeg.run('-i', 'input.mp4', '-vf', 'fps=30', outputFileName);
-
-                
-                const data = ffmpeg.read(outputFileName);
-                const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
                 const link = document.createElement('a');
-                link.href = url;
-                link.download = 'processed-video.mp4';
+                link.href = video.src;
+                link.download = 'downloaded-video.mp4';
+                document.body.appendChild(link);
                 link.click();
+                document.body.removeChild(link);
             } else {
                 const link = document.createElement('a');
                 link.download = 'colorblind-enhanced-image.png';
@@ -211,7 +195,6 @@
                 link.click();
             }
         }
-
         
         async function fetchFile(url) {
             const response = await fetch(url);
@@ -249,4 +232,4 @@
     </div>
     <script src="//code.tidio.co/ux4bgg4x47vktcy858hbmdaqo8qd9esj.js" async></script>
 </body>
-</html>
+</html> 
